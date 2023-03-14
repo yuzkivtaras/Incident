@@ -13,11 +13,15 @@ namespace DataService.Data
     {
         private readonly AppDbContext _context;
         public IContactsRepository Contacts { get; private set; }
+        public IAccountRepository Accounts { get; private set; }
+        public IIncidentRepository Incidents { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
             Contacts = new ContactsRepository(context);
+            Accounts = new AccountRepository(context);
+            Incidents = new IncidentRepository(context);
         }
 
         public async Task CompleteAsync()

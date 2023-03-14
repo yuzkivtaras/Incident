@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataService.IRepository
 {
-    public interface IContactsRepository : IGenericContactRepository<Contact>
+    public interface IIncidentRepository : IGenericIncidentRepository<Incident>
     {
-        Task<bool> UpdateContact(Contact contact);
     }
 }

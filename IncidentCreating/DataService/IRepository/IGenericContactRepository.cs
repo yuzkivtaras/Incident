@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace DataService.IRepository
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericContactRepository<T> where T : class
     {
         Task<IEnumerable<T>> All();
 
         Task<T> GetByEmail(string email);
 
         Task<bool> Add(T enity);
-
-        Task<bool> Update(T enity);
     }
 }

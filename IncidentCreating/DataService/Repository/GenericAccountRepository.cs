@@ -9,17 +9,16 @@ using System.Threading.Tasks;
 
 namespace DataService.Repository
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericAccountRepository<T> : IGenericAccountRepository<T> where T : class
     {
         protected AppDbContext _context;
         internal DbSet<T> dbSet;
 
-        public GenericRepository(AppDbContext context)
+        public GenericAccountRepository(AppDbContext context)
         {
             _context = context;
             dbSet = context.Set<T>();
         }
-
         public virtual async Task<bool> Add(T enity)
         {
             await dbSet.AddAsync(enity);
@@ -31,14 +30,9 @@ namespace DataService.Repository
             return await dbSet.ToListAsync();
         }
 
-        public virtual async  Task<T> GetByEmail(string email)
+        public virtual async Task<T> GetByName(string name)
         {
-            return await dbSet.FindAsync(email);
-        }
-
-        public virtual Task<bool> Update(T enity)
-        {
-            throw new NotImplementedException();
+            return await dbSet.FindAsync(name);
         }
     }
 }

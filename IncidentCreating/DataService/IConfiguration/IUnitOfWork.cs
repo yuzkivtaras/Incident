@@ -10,6 +10,8 @@ namespace DataService.IConfiguration
     public interface IUnitOfWork
     {
         IContactsRepository Contacts { get; }
+        IAccountRepository Accounts { get; }
+        IIncidentRepository Incidents { get; }
 
         Task CompleteAsync();
     }

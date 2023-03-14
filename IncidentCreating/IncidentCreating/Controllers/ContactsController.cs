@@ -1,6 +1,8 @@
 ﻿using DataService.IConfiguration;
 using Entities.DbSet;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Runtime.Intrinsics.X86;
 
 namespace IncidentCreating.Controllers
 {
@@ -15,6 +17,7 @@ namespace IncidentCreating.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllContacts")]
         public async Task<IActionResult> GetContacts()
         {
             var contacts = await _unitOfWork.Contacts.All();
@@ -22,24 +25,41 @@ namespace IncidentCreating.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddContacts(Contact contact)
+        [Route("AddContact")]
+        public async Task<IActionResult> AddContacts([FromBody] Contact contact)
         {
-            var _contact = new Contact();
-            _contact.FirstName = contact.FirstName;
-            _contact.LastName = contact.LastName;
-            _contact.Email = contact.Email;
+            if (ModelState.IsValid)
+            {
+                var contactExist = await _unitOfWork.Contacts.GetByEmail(contact.Email);
+                if (contactExist != null)
+                {
+                    return BadRequest("Email already in use");
+                }
 
-            await _unitOfWork.Contacts.Add(_contact);
-            await _unitOfWork.CompleteAsync();
+                var _contact = new Contact();
+                _contact.FirstName = contact.FirstName;
+                _contact.LastName = contact.LastName;
+                _contact.Email = contact.Email;
 
-            return CreatedAtRoute("GetContact", new { email = _contact.Email }, contact);
+                await _unitOfWork.Contacts.Add(_contact);
+                await _unitOfWork.CompleteAsync();
+
+                var response = new HttpResponseMessage(HttpStatusCode.Redirect);
+                response.Headers.Location = new Uri("https://localhost:7116/api/Account/AddAccount");
+
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest("Invalid payload");
+            }
         }
 
         [HttpGet]
         [Route("GetContact", Name = "GetContact")]
-        public IActionResult GetContact(string email)
+        public async Task<IActionResult> GetContact(string email)
         {
-            var contact = _unitOfWork.Contacts.GetByEmail(email);
+            var contact = await _unitOfWork.Contacts.GetByEmail(email);
             return Ok();
         }
     }
